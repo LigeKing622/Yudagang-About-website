@@ -1,0 +1,5 @@
+xn--vlog-4s3hr20m.lol {
+    root * /var/www/html
+    encode zstd gzip
+    file_server
+}
