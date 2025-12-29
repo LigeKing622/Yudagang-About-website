@@ -15,272 +15,98 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 	<!-- Command Terminal CSS -->
 	<style>
-		/* Command Terminal Styles */
+		/* Mac-style Command Terminal Styles */
+		:root {
+			--mac-bg: rgba(255,255,255,0.06);
+			--glass: rgba(255,255,255,0.06);
+			--accent: #4cc9f0;
+			--glass-border: rgba(255,255,255,0.08);
+		}
+		body, .command-box, .command-output { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif; }
 		.open-command-btn {
 			position: fixed;
-			bottom: 20px;
-			right: 20px;
-			background: linear-gradient(135deg, #4cc9f0 0%, #4361ee 100%);
-			color: white;
-			border: none;
-			border-radius: 50%;
-			width: 60px;
-			height: 60px;
-			font-size: 24px;
+			bottom: 22px;
+			right: 22px;
+			background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+			color: #fff;
+			border: 1px solid rgba(255,255,255,0.06);
+			border-radius: 14px;
+			width: 56px;
+			height: 56px;
+			font-size: 20px;
 			cursor: pointer;
-			box-shadow: 0 4px 15px rgba(76, 201, 240, 0.4);
-			transition: all 0.3s ease;
-			z-index: 9998;
+			box-shadow: 0 8px 24px rgba(0,0,0,0.35), inset 0 -1px 0 rgba(255,255,255,0.02);
+			transition: transform 200ms ease, box-shadow 200ms ease;
 			display: flex;
 			align-items: center;
 			justify-content: center;
+			z-index: 9998;
 		}
-		
-		.open-command-btn:hover {
-			transform: scale(1.1);
-			box-shadow: 0 6px 20px rgba(76, 201, 240, 0.6);
-		}
+		.open-command-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.45); }
 		
 		.command-box {
 			position: fixed;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			width: 600px;
-			max-width: 90%;
-			height: 400px;
-			background: rgba(26, 26, 46, 0.95);
-			backdrop-filter: blur(10px);
-			border: 1px solid rgba(76, 201, 240, 0.3);
-			border-radius: 12px;
-			box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-			z-index: 9999;
-			overflow: hidden;
-			display: flex;
-			flex-direction: column;
-			transition: all 0.3s ease;
+			top: 50%; left: 50%; transform: translate(-50%, -50%);
+			width: 680px; max-width: 96%; height: 420px;
+			background: linear-gradient(180deg, rgba(18,18,20,0.66), rgba(18,18,20,0.56));
+			backdrop-filter: blur(18px) saturate(120%);
+			-webkit-backdrop-filter: blur(18px) saturate(120%);
+			border-radius: 16px;
+			border: 1px solid var(--glass-border);
+			box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 6px 18px rgba(0,0,0,0.35);
+			z-index: 9999; overflow: hidden; display: flex; flex-direction: column; transition: transform .18s ease;
 		}
-		
-		.command-box.hidden {
-			display: none;
-		}
+		.command-box.hidden { display: none; }
 		
 		.command-header {
-			padding: 12px 16px;
-			background: linear-gradient(to right, #0f3460, #1a1a2e);
-			border-bottom: 1px solid rgba(76, 201, 240, 0.2);
-			cursor: move;
-			user-select: none;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
+			display: flex; align-items: center; gap: 12px; padding: 10px 14px; cursor: grab;
+			background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+			border-bottom: 1px solid rgba(255,255,255,0.02);
 		}
+		.command-header:active { cursor: grabbing; }
 		
-		.window-controls {
-			display: flex;
-			gap: 8px;
-		}
+		.window-controls { display: flex; gap: 8px; align-items: center; margin-left: 6px; }
+		.window-btn { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 1px 0 rgba(0,0,0,0.35) inset; }
+		.close-btn { background: #ff5f57; border: 1px solid rgba(0,0,0,0.08); }
+		.minimize-btn { background: #ffbd2e; border: 1px solid rgba(0,0,0,0.06); }
+		.maximize-btn { background: #28ca42; border: 1px solid rgba(0,0,0,0.06); }
 		
-		.window-btn {
-			width: 12px;
-			height: 12px;
-			border-radius: 50%;
-			cursor: pointer;
-		}
+		/* Title left-aligned like macOS */
+		.command-title { display:flex; align-items:center; gap:10px; color: #e6eef8; font-size:13px; font-weight:600; padding-left:6px; }
+		.command-title i { color: var(--accent); opacity: .95; }
 		
-		.close-btn {
-			background: #ff5f57;
-		}
+		.command-content { flex:1; display:flex; flex-direction:column; overflow:hidden; }
 		
-		.minimize-btn {
-			background: #ffbd2e;
-		}
+		.command-output { flex:1; padding:14px 18px; overflow-y:auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Segoe UI Mono", monospace; font-size:13px; color:#dfeefe; line-height:1.55; }
+		.output-line { margin-bottom:8px; opacity:0; transform:translateY(6px); animation: fadeIn .28s ease forwards; }
+		@keyframes fadeIn { to { opacity:1; transform:none; } }
 		
-		.maximize-btn {
-			background: #28ca42;
-		}
+		.command-prompt { color: var(--accent); font-weight:700; }
+		.command-cmd { color:#90ee90; font-weight:700; }
+		.error { color:#ff7b7b; }
+		.success { color:#7ee787; }
+		.info { color:#ffd36b; }
 		
-		.command-title {
-			flex: 1;
-			text-align: center;
-			color: #4cc9f0;
-			font-family: 'Consolas', 'Monaco', monospace;
-			font-size: 14px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			gap: 8px;
-		}
+		.command-input-container { display:flex; align-items:center; padding:12px 14px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.04)); border-top:1px solid rgba(255,255,255,0.02); }
+		.prompt-symbol { color:var(--accent); margin-right:10px; font-weight:700; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; }
+		.command-input { flex:1; background:transparent; border:none; color:#e8f6ff; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; font-size:13px; outline:none; }
+		.command-input::placeholder { color: rgba(230,230,230,0.35); }
 		
-		.command-content {
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-			padding: 0;
-			overflow: hidden;
-		}
+		.flash-effect { animation: flash .5s ease; }
+		@keyframes flash { 0%,100%{ opacity:1 } 50%{ opacity:.75 } }
 		
-		.command-output {
-			flex: 1;
-			padding: 16px;
-			overflow-y: auto;
-			font-family: 'Consolas', 'Monaco', monospace;
-			font-size: 13px;
-			line-height: 1.5;
-			color: #e6e6e6;
-		}
+		/* Control Panel Specific Styles (kept consistent) */
+		.switch { position: relative; display:inline-flex; align-items:center; cursor:pointer; margin:5px 0; }
+		.switch input { opacity:0; width:0; height:0; }
+		.slider { position: relative; display:inline-block; width:50px; height:24px; background-color:#2a2a2a; border-radius:24px; margin-right:10px; transition:.3s; }
+		.slider:before { position:absolute; content:""; height:16px; width:16px; left:4px; bottom:4px; background:#fff; border-radius:50%; transition:.3s; }
+		input:checked + .slider { background-color: var(--accent); }
+		input:checked + .slider:before { transform: translateX(26px); }
+		.theme-btn { background:transparent; color:#e6eef8; border:1px solid rgba(255,255,255,0.04); padding:8px 12px; border-radius:8px; cursor:pointer; transition:all .18s; font-size:13px; }
+		.theme-btn:hover { transform:translateY(-3px); box-shadow:0 8px 18px rgba(0,0,0,0.45); }
 		
-		.output-line {
-			margin-bottom: 8px;
-			animation: fadeIn 0.3s ease;
-		}
-		
-		@keyframes fadeIn {
-			from { opacity: 0; transform: translateY(5px); }
-			to { opacity: 1; transform: translateY(0); }
-		}
-		
-		.command-prompt {
-			color: #4cc9f0;
-			font-weight: bold;
-		}
-		
-		.command-cmd {
-			color: #28ca42;
-			font-weight: bold;
-		}
-		
-		.error {
-			color: #ff5f57;
-		}
-		
-		.success {
-			color: #28ca42;
-		}
-		
-		.info {
-			color: #ffbd2e;
-		}
-		
-		.command-input-container {
-			display: flex;
-			align-items: center;
-			padding: 12px 16px;
-			background: rgba(40, 45, 70, 0.8);
-			border-top: 1px solid rgba(76, 201, 240, 0.2);
-		}
-		
-		.prompt-symbol {
-			color: #4cc9f0;
-			margin-right: 10px;
-			font-weight: bold;
-			font-family: 'Consolas', 'Monaco', monospace;
-		}
-		
-		.command-input {
-			flex: 1;
-			background: transparent;
-			border: none;
-			color: #e6e6e6;
-			font-family: 'Consolas', 'Monaco', monospace;
-			font-size: 13px;
-			outline: none;
-		}
-		
-		.command-input::placeholder {
-			color: #666;
-		}
-		
-		.flash-effect {
-			animation: flash 0.5s ease;
-		}
-		
-		@keyframes flash {
-			0%, 100% { opacity: 1; }
-			50% { opacity: 0.7; }
-		}
-		
-		/* Control Panel Specific Styles */
-		.switch {
-			position: relative;
-			display: inline-flex;
-			align-items: center;
-			cursor: pointer;
-			margin: 5px 0;
-		}
-		
-		.switch input {
-			opacity: 0;
-			width: 0;
-			height: 0;
-		}
-		
-		.slider {
-			position: relative;
-			display: inline-block;
-			width: 50px;
-			height: 24px;
-			background-color: #333;
-			border-radius: 24px;
-			margin-right: 10px;
-			transition: .4s;
-		}
-		
-		.slider:before {
-			position: absolute;
-			content: "";
-			height: 16px;
-			width: 16px;
-			left: 4px;
-			bottom: 4px;
-			background-color: white;
-			border-radius: 50%;
-			transition: .4s;
-		}
-		
-		input:checked + .slider {
-			background-color: #4cc9f0;
-		}
-		
-		input:checked + .slider:before {
-			transform: translateX(26px);
-		}
-		
-		.theme-btn {
-			background-color: rgba(40, 45, 70, 0.8);
-			color: #e6e6e6;
-			border: 1px solid rgba(76, 201, 240, 0.3);
-			padding: 8px 15px;
-			border-radius: 6px;
-			cursor: pointer;
-			transition: all 0.3s;
-			font-size: 12px;
-		}
-		
-		.theme-btn:hover {
-			transform: translateY(-2px);
-			box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-			background-color: rgba(76, 201, 240, 0.2);
-		}
-		
-		/* Mobile responsiveness */
-		@media (max-width: 768px) {
-			.command-box {
-				width: 95%;
-				height: 50vh;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-			}
-			
-			.open-command-btn {
-				width: 50px;
-				height: 50px;
-				font-size: 20px;
-				bottom: 15px;
-				right: 15px;
-			}
-		}
+		/* Responsive */
+		@media (max-width:768px) { .command-box { width:95%; height:52vh; } .open-command-btn { width:50px; height:50px; font-size:18px; bottom:16px; right:16px; } }
 	</style>
 </head>
 
@@ -541,19 +367,20 @@
 				<div class="window-btn maximize-btn" id="maximizeBtn"></div>
 			</div>
 			<div class="command-title">
-				<i class="fas fa-terminal"></i> PowerShell
+				<i class="fas fa-terminal"></i>
+				<span>PowerShell macOS</span>
 			</div>
 		</div>
 		
 		<div class="command-content">
 			<div class="command-output" id="commandOutput">
-				<div class="output-line command-prompt">Welcome to PowerShell!</div>
-				<div class="output-line">输入 <span class="command-cmd">help</span> 查看所有可用命令</div>
-				<div class="output-line">输入 <span class="command-cmd">control</span> 打开功能控制面板</div>
+				<div class="output-line command-prompt">Welcome to PowerShell</div>
+				<div class="output-line">!<span class="command-cmd">help</span> 查看所有可用命令</div>
+				<div class="output-line">!<span class="command-cmd">control</span> 打开功能控制面板</div>
 			</div>
 			
 			<div class="command-input-container">
-				<div class="prompt-symbol">$</div>
+				<div class="prompt-symbol">!</div>
 				<input type="text" class="command-input" id="commandInput" placeholder="输入命令后按回车执行..." autocomplete="off">
 			</div>
 		</div>
@@ -568,14 +395,15 @@
 				<div class="window-btn maximize-btn"></div>
 			</div>
 			<div class="command-title">
-				<i class="fas fa-sliders-h"></i> PowerShell
+				<i class="fas fa-sliders-h"></i>
+				<span>Settings</span>
 			</div>
 		</div>
 		
 		<div class="command-content">
 			<div class="command-output" id="controlOutput">
 				<div class="output-line command-prompt">PowerShell 1.0</div>
-				<div class="output-line">PowerShell Setting <span class="command-cmd">control</span> 触发打开</div>
+				<div class="output-line">PowerShell Setting <span class="command-cmd">Setting</span> 触发打开</div>
 				<div class="output-line">在这里可以实现各种前端控制功能</div>
 				<br>
 				<div class="output-line">
@@ -628,7 +456,7 @@
 	
 	<!-- 命令终端脚本 -->
 	<script>
-		// 获取DOM元素
+		// DOM references
 		const commandBox = document.getElementById('commandBox');
 		const controlPanel = document.getElementById('controlPanel');
 		const openCommandBoxBtn = document.getElementById('openCommandBox');
@@ -640,324 +468,124 @@
 		const controlOutput = document.getElementById('controlOutput');
 		const commandHeader = document.getElementById('commandHeader');
 		const controlHeader = document.getElementById('controlHeader');
-		
-		// 命令历史记录
+
 		let commandHistory = [];
 		let historyIndex = -1;
-		
-		// 初始化
-		document.addEventListener('DOMContentLoaded', function() {
-			// 打开命令框按钮事件
-			openCommandBoxBtn.addEventListener('click', function() {
-				commandBox.classList.remove('hidden');
-				commandInput.focus();
-			});
-			
-			// 关闭命令框
-			closeBtn.addEventListener('click', function() {
-				commandBox.classList.add('hidden');
-			});
-			
-			// 关闭控制面板
-			closeControlBtn.addEventListener('click', function() {
-				controlPanel.classList.add('hidden');
-				commandBox.classList.remove('hidden');
-				commandInput.focus();
-			});
-			
-			// 装饰按钮事件
-			document.getElementById('minimizeBtn').addEventListener('click', function() {
+
+		document.addEventListener('DOMContentLoaded', () => {
+			openCommandBoxBtn.addEventListener('click', () => { commandBox.classList.remove('hidden'); commandInput.focus(); });
+			closeBtn.addEventListener('click', () => commandBox.classList.add('hidden'));
+			closeControlBtn.addEventListener('click', () => { controlPanel.classList.add('hidden'); commandBox.classList.remove('hidden'); commandInput.focus(); });
+
+			document.getElementById('minimizeBtn').addEventListener('click', () => {
 				commandBox.style.transform = 'translate(-50%, -50%) scale(0.9)';
-				setTimeout(() => {
-					commandBox.style.transform = 'translate(-50%, -50%)';
-				}, 300);
+				setTimeout(() => commandBox.style.transform = 'translate(-50%, -50%)', 300);
 			});
-			
-			document.getElementById('maximizeBtn').addEventListener('click', function() {
-				if (commandBox.style.width === '95%') {
-					commandBox.style.width = '600px';
-					commandBox.style.height = '400px';
-				} else {
-					commandBox.style.width = '95%';
-					commandBox.style.height = '80vh';
-				}
+
+			document.getElementById('maximizeBtn').addEventListener('click', () => {
+				if (commandBox.style.width === '95%') { commandBox.style.width = '600px'; commandBox.style.height = '400px'; }
+				else { commandBox.style.width = '95%'; commandBox.style.height = '80vh'; }
 			});
-			
-			// 命令输入事件
-			commandInput.addEventListener('keydown', function(e) {
-				if (e.key === 'Enter') {
-					executeCommand(commandInput.value);
-				} else if (e.key === 'ArrowUp') {
-					// 上箭头获取历史命令
+
+			commandInput.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter') executeCommand(commandInput.value);
+				else if (e.key === 'ArrowUp') {
 					e.preventDefault();
 					if (commandHistory.length > 0 && historyIndex < commandHistory.length - 1) {
-						historyIndex++;
-						commandInput.value = commandHistory[commandHistory.length - 1 - historyIndex];
+						historyIndex++; commandInput.value = commandHistory[commandHistory.length - 1 - historyIndex];
 					}
 				} else if (e.key === 'ArrowDown') {
-					// 下箭头获取历史命令
 					e.preventDefault();
-					if (historyIndex > 0) {
-						historyIndex--;
-						commandInput.value = commandHistory[commandHistory.length - 1 - historyIndex];
-					} else {
-						historyIndex = -1;
-						commandInput.value = '';
-					}
+					if (historyIndex > 0) { historyIndex--; commandInput.value = commandHistory[commandHistory.length - 1 - historyIndex]; }
+					else { historyIndex = -1; commandInput.value = ''; }
 				}
 			});
-			
-			// 控制面板命令输入
-			controlInput.addEventListener('keydown', function(e) {
-				if (e.key === 'Enter') {
-					executeControlCommand(controlInput.value);
-				}
-			});
-			
-			// 主题按钮事件
-			document.querySelectorAll('.theme-btn').forEach(btn => {
-				btn.addEventListener('click', function() {
-					const color = this.getAttribute('data-color');
-					document.documentElement.style.setProperty('--primary-color', color);
-					// 更新按钮颜色
-					document.querySelectorAll('.theme-btn').forEach(b => {
-						b.style.borderColor = 'rgba(76, 201, 240, 0.3)';
-					});
-					this.style.borderColor = color;
-					addOutputLine(`主题颜色已切换为: ${this.textContent}`, 'success', controlOutput);
-					
-					// 更新悬浮按钮颜色
-					openCommandBoxBtn.style.background = `linear-gradient(135deg, ${color} 0%, ${adjustColor(color, -30)} 100%)`;
-				});
-			});
-			
-			// 功能开关事件
-			document.getElementById('toggleAnimation').addEventListener('change', function() {
-				const status = this.checked ? '开启' : '关闭';
-				addOutputLine(`页面动画效果已${status}`, 'info', controlOutput);
-				// 这里可以添加实际的动画控制逻辑
-			});
-			
-			document.getElementById('toggleSounds').addEventListener('change', function() {
-				const status = this.checked ? '开启' : '关闭';
-				addOutputLine(`提示音效已${status}`, 'info', controlOutput);
-				// 这里可以添加实际的音效控制逻辑
-			});
-			
-			// 初始化拖拽功能
+
+			controlInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') executeControlCommand(controlInput.value); });
+
+			document.querySelectorAll('.theme-btn').forEach(btn => btn.addEventListener('click', function() {
+				const color = this.getAttribute('data-color');
+				document.documentElement.style.setProperty('--primary-color', color);
+				document.querySelectorAll('.theme-btn').forEach(b => b.style.borderColor = 'rgba(76, 201, 240, 0.3)');
+				this.style.borderColor = color;
+				addOutputLine(`主题颜色已切换为: ${this.textContent}`, 'success', controlOutput);
+				openCommandBoxBtn.style.background = `linear-gradient(135deg, ${color} 0%, ${adjustColor(color, -30)} 100%)`;
+			}));
+
+			document.getElementById('toggleAnimation').addEventListener('change', function() { addOutputLine(`页面动画效果已${this.checked ? '开启' : '关闭'}`, 'info', controlOutput); });
+			document.getElementById('toggleSounds').addEventListener('change', function() { addOutputLine(`提示音效已${this.checked ? '开启' : '关闭'}`, 'info', controlOutput); });
+
 			initDrag(commandBox, commandHeader);
 			initDrag(controlPanel, controlHeader);
-			
-			// 添加CSS变量
+
 			document.documentElement.style.setProperty('--primary-color', '#4cc9f0');
-			
-			// 设置悬浮按钮初始颜色
 			openCommandBoxBtn.style.background = 'linear-gradient(135deg, #4cc9f0 0%, #4361ee 100%)';
-			
-			// 添加键盘快捷键 (Ctrl+` 打开终端)
-			document.addEventListener('keydown', function(e) {
-				if (e.ctrlKey && e.key === 'f5') {
-					e.preventDefault();
-					if (commandBox.classList.contains('hidden')) {
-						commandBox.classList.remove('hidden');
-						commandInput.focus();
-					} else {
-						commandBox.classList.add('hidden');
-					}
-				}
-				
-				// ESC键关闭所有面板
-				if (e.key === 'Escape') {
-					commandBox.classList.add('hidden');
-					controlPanel.classList.add('hidden');
-				}
+
+			document.addEventListener('keydown', (e) => {
+				if (e.ctrlKey && e.key === 'f5') { e.preventDefault(); commandBox.classList.toggle('hidden'); if (!commandBox.classList.contains('hidden')) commandInput.focus(); }
+				if (e.key === 'Escape') { commandBox.classList.add('hidden'); controlPanel.classList.add('hidden'); }
 			});
 		});
-		
-		// 执行命令
+
 		function executeCommand(cmd) {
 			if (!cmd.trim()) return;
-			
-			// 添加到历史记录
-			commandHistory.unshift(cmd);
-			historyIndex = -1;
-			
-			// 显示命令
+			commandHistory.unshift(cmd); historyIndex = -1;
 			addOutputLine(`$ ${cmd}`, 'command-prompt', commandOutput);
-			
-			// 处理命令
 			const cmdLower = cmd.toLowerCase().trim();
-			
-			if (cmdLower === 'help') {
-				addOutputLine('可用命令列表:', 'info', commandOutput);
-				addOutputLine('  control       - 打开功能控制面板', 'info', commandOutput);
-				addOutputLine('  clear         - 清空命令输出', 'info', commandOutput);
-				addOutputLine('  time          - 显示当前时间', 'info', commandOutput);
-				addOutputLine('  theme dark/light - 切换主题', 'info', commandOutput);
-				addOutputLine('  calc <表达式>  - 计算数学表达式', 'info', commandOutput);
-				addOutputLine('  about         - 关于于大刚', 'info', commandOutput);
-				addOutputLine('  help          - 显示此帮助信息', 'info', commandOutput);
-			} 
-			else if (cmdLower === 'control') {
-				// 特殊命令：打开功能控制面板
-				commandBox.classList.add('hidden');
-				controlPanel.classList.remove('hidden');
-				controlInput.focus();
-				addOutputLine('正在打开功能控制面板...', 'success', commandOutput);
-			}
-			else if (cmdLower === 'clear') {
-				// 清空输出
-				commandOutput.innerHTML = '';
-			}
-			else if (cmdLower === 'time') {
-				// 显示当前时间
-				const now = new Date();
-				const timeStr = now.toLocaleTimeString();
-				const dateStr = now.toLocaleDateString();
-				addOutputLine(`当前时间: ${timeStr}`, 'info', commandOutput);
-				addOutputLine(`当前日期: ${dateStr}`, 'info', commandOutput);
-			}
-			else if (cmdLower.startsWith('theme ')) {
-				// 切换主题
-				const theme = cmdLower.split(' ')[1];
-				if (theme === 'dark') {
-					document.body.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)';
-					addOutputLine('已切换至暗色主题', 'success', commandOutput);
-				} else if (theme === 'light') {
-					document.body.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
-					addOutputLine('已切换至亮色主题', 'success', commandOutput);
-				} else {
-					addOutputLine('未知主题，请使用 "theme dark" 或 "theme light"', 'error', commandOutput);
+			switch (true) {
+				case cmdLower === 'help':
+					addOutputLine('可用命令: help, setting, clear, time, theme, calc, about, lovetime', 'info', commandOutput); break;
+				case cmdLower === 'lovetime': {
+					const startDate = new Date('2025-07-06T00:00:00'); const now = new Date(); const diffDays = Math.floor(Math.abs(now - startDate) / (1000*60*60*24));
+					addOutputLine(`我们已经在一起 ${diffDays} 天了！`, 'success', commandOutput); break;
 				}
-			}
-			else if (cmdLower.startsWith('calc ')) {
-				// 计算表达式
-				try {
-					const expression = cmd.substring(5);
-					// 安全地计算表达式
-					const result = Function('"use strict"; return (' + expression + ')')();
-					addOutputLine(`计算结果: ${result}`, 'success', commandOutput);
-				} catch (error) {
-					addOutputLine(`计算错误: ${error.message}`, 'error', commandOutput);
+				case cmdLower === 'setting': commandBox.classList.add('hidden'); controlPanel.classList.remove('hidden'); controlInput.focus(); addOutputLine('打开控制面板', 'success', commandOutput); break;
+				case cmdLower === 'clear': commandOutput.innerHTML = ''; break;
+				case cmdLower === 'time': { const now = new Date(); addOutputLine(`当前时间: ${now.toLocaleTimeString()}`, 'info', commandOutput); addOutputLine(`当前日期: ${now.toLocaleDateString()}`, 'info', commandOutput); break; }
+				case cmdLower.startsWith('theme '): {
+					const theme = cmdLower.split(' ')[1];
+					if (theme === 'dark') { document.body.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)'; addOutputLine('已切换至暗色主题', 'success', commandOutput); }
+					else if (theme === 'light') { document.body.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)'; addOutputLine('已切换至亮色主题', 'success', commandOutput); }
+					else addOutputLine('未知主题，请使用 "theme dark" 或 "theme light"', 'error', commandOutput);
+					break;
 				}
+				case cmdLower.startsWith('calc '): {
+					try { const result = Function('"use strict"; return (' + cmd.substring(5) + ')')(); addOutputLine(`计算结果: ${result}`, 'success', commandOutput); }
+					catch (e) { addOutputLine(`计算错误: ${e.message}`, 'error', commandOutput); }
+					break;
+				}
+				case cmdLower === 'about': addOutputLine('关于: 于大刚 - 前端开发者', 'info', commandOutput); break;
+				default: addOutputLine(`未知命令: ${cmd}`, 'error', commandOutput); addOutputLine('输入 "help" 查看', 'info', commandOutput);
 			}
-			else if (cmdLower === 'about') {
-				// 显示关于信息
-				addOutputLine('=== 关于于大刚 ===', 'command-prompt', commandOutput);
-				addOutputLine('👦 于大刚 (Yu Da Gang)', 'info', commandOutput);
-				addOutputLine('📍 山东 · 聊城 · 江北水城', 'info', commandOutput);
-				addOutputLine('🎓 职高生 · 前端开发者', 'info', commandOutput);
-				addOutputLine('💻 热爱计算机技术，梦想是和真爱一起度过余生', 'info', commandOutput);
-				addOutputLine('🔗 更多信息请访问: https://糖心vlog.lol', 'info', commandOutput);
-			}
-			else {
-				addOutputLine(`未知命令: ${cmd}`, 'error', commandOutput);
-				addOutputLine('输入 "help" 查看可用命令', 'info', commandOutput);
-			}
-			
-			// 清空输入框
-			commandInput.value = '';
-			
-			// 滚动到底部
-			commandOutput.scrollTop = commandOutput.scrollHeight;
+			commandInput.value = ''; commandOutput.scrollTop = commandOutput.scrollHeight;
 		}
-		
-		// 执行控制面板命令
+
 		function executeControlCommand(cmd) {
 			if (!cmd.trim()) return;
-			
 			addOutputLine(`> ${cmd}`, 'command-prompt', controlOutput);
-			
 			const cmdLower = cmd.toLowerCase().trim();
-			
-			if (cmdLower === 'help') {
-				addOutputLine('控制面板命令:', 'info', controlOutput);
-				addOutputLine('  help - 显示此帮助信息', 'info', controlOutput);
-				addOutputLine('  back - 返回命令终端', 'info', controlOutput);
-				addOutputLine('  reset - 重置所有设置', 'info', controlOutput);
-			}
-			else if (cmdLower === 'back') {
-				controlPanel.classList.add('hidden');
-				commandBox.classList.remove('hidden');
-				commandInput.focus();
-			}
-			else if (cmdLower === 'reset') {
-				document.getElementById('toggleAnimation').checked = false;
-				document.getElementById('toggleSounds').checked = true;
-				document.documentElement.style.setProperty('--primary-color', '#4cc9f0');
-				openCommandBoxBtn.style.background = 'linear-gradient(135deg, #4cc9f0 0%, #4361ee 100%)';
-				addOutputLine('所有设置已重置为默认值', 'success', controlOutput);
-			}
-			else {
-				addOutputLine(`未知命令: ${cmd}`, 'error', controlOutput);
-				addOutputLine('输入 "help" 查看可用命令', 'info', controlOutput);
-			}
-			
-			controlInput.value = '';
-			controlOutput.scrollTop = controlOutput.scrollHeight;
+			if (cmdLower === 'help') { addOutputLine('控制命令: help, back, reset', 'info', controlOutput); }
+			else if (cmdLower === 'back') { controlPanel.classList.add('hidden'); commandBox.classList.remove('hidden'); commandInput.focus(); }
+			else if (cmdLower === 'reset') { document.getElementById('toggleAnimation').checked = false; document.getElementById('toggleSounds').checked = true; document.documentElement.style.setProperty('--primary-color', '#4cc9f0'); openCommandBoxBtn.style.background = 'linear-gradient(135deg, #4cc9f0 0%, #4361ee 100%)'; addOutputLine('已重置', 'success', controlOutput); }
+			else { addOutputLine(`未知命令: ${cmd}`, 'error', controlOutput); }
+			controlInput.value = ''; controlOutput.scrollTop = controlOutput.scrollHeight;
 		}
-		
-		// 添加输出行
+
 		function addOutputLine(text, className, outputElement) {
-			const line = document.createElement('div');
-			line.className = `output-line ${className}`;
-			
-			// 处理包含HTML的内容
-			if (text.includes('<span') || text.includes('<i>')) {
-				line.innerHTML = text;
-			} else {
-				line.textContent = text;
-			}
-			
+			const line = document.createElement('div'); line.className = `output-line ${className}`;
+			if (text.includes('<span') || text.includes('<i>')) line.innerHTML = text; else line.textContent = text;
 			outputElement.appendChild(line);
 		}
-		
-		// 初始化拖拽功能
+
 		function initDrag(element, header) {
-			let isDragging = false;
-			let currentX, currentY, initialX, initialY;
-			
-			header.addEventListener('mousedown', startDrag);
-			document.addEventListener('mousemove', drag);
-			document.addEventListener('mouseup', stopDrag);
-			
-			function startDrag(e) {
-				isDragging = true;
-				initialX = e.clientX - element.offsetLeft;
-				initialY = e.clientY - element.offsetTop;
-				element.classList.add('flash-effect');
-				
-				// 移除动画类
-				setTimeout(() => {
-					element.classList.remove('flash-effect');
-				}, 500);
-			}
-			
-			function drag(e) {
-				if (!isDragging) return;
-				e.preventDefault();
-				
-				currentX = e.clientX - initialX;
-				currentY = e.clientY - initialY;
-				
-				// 限制在窗口内
-				currentX = Math.max(0, Math.min(currentX, window.innerWidth - element.offsetWidth));
-				currentY = Math.max(0, Math.min(currentY, window.innerHeight - element.offsetHeight));
-				
-				element.style.left = `${currentX}px`;
-				element.style.top = `${currentY}px`;
-				element.style.transform = 'none';
-			}
-			
-			function stopDrag() {
-				isDragging = false;
-			}
+			let isDragging = false, currentX, currentY, initialX, initialY;
+			header.addEventListener('mousedown', startDrag); document.addEventListener('mousemove', drag); document.addEventListener('mouseup', stopDrag);
+			function startDrag(e) { isDragging = true; initialX = e.clientX - element.offsetLeft; initialY = e.clientY - element.offsetTop; element.classList.add('flash-effect'); setTimeout(() => element.classList.remove('flash-effect'), 500); }
+			function drag(e) { if (!isDragging) return; e.preventDefault(); currentX = e.clientX - initialX; currentY = e.clientY - initialY; currentX = Math.max(0, Math.min(currentX, window.innerWidth - element.offsetWidth)); currentY = Math.max(0, Math.min(currentY, window.innerHeight - element.offsetHeight)); element.style.left = `${currentX}px`; element.style.top = `${currentY}px`; element.style.transform = 'none'; }
+			function stopDrag() { isDragging = false; }
 		}
-		
-		// 辅助函数：调整颜色亮度
-		function adjustColor(color, amount) {
-			return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
-		}
+
+		function adjustColor(color, amount) { return '#' + color.replace(/^#/, '').replace(/../g, c => ('0'+Math.min(255, Math.max(0, parseInt(c,16)+amount)).toString(16)).substr(-2)); }
 	</script>
 	
 	<!-- 统计脚本 -->
