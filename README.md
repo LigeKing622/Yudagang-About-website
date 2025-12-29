@@ -2,7 +2,9 @@ Version 1.0.1 更新 （2025.12.30）
 - PowerShell Theme 为MacOS
 - 新增Love Time
 - 整理注释 不采用ai 写法
--
+-<img width="595" height="406" alt="31dd346f10511dc32db75b3192709956" src="https://github.com/user-attachments/assets/5fe0bcda-1d4f-4c9e-b252-3c2da0ed7972" />
+-![Uploading b6031372f60b4d3f4cc632d0597803bd.png…]()
+
 
 Version 1.0.0 更新 （2025.12.30）
 - 增加PowerShell
