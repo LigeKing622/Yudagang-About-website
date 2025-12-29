@@ -1,24 +1,15 @@
-Version 1.0.0 2025.12.23
--创建可拖动的PowerShell，
--实现红色关闭按钮、黄色和绿色
--添加命令输入区域，支持回车执行
--预设固定命令，执行特定功能
--添加命令历史记录功能
+Version 1.0.1 更新 （2025.12.30）
+- PowerShell Theme 为MacOS
+- 新增Love Time
+- 整理注释 不采用ai 写法
+-
 
-贡献者 Yu Da Gang 二改Zyoo 个人主页
+Version 1.0.0 更新 （2025.12.30）
+- 增加PowerShell
+- 修复背景问题
+————————
+- 以上为二改 作者为于大刚
 
---------
-
-1.6更新(2024.09.05)
-- 增加 `docker-compose` 一键部署。  
-- 自行安装 `docker` 和 `docker-compose`。  
-- 修改 `Caddyfile` 配置中的域名，然后运行：  
-  ```bash
-  docker compose up -d
-  ```
-- 自动配置 SSL 证书，并开启 HTTPS。
-
-> 贡献者：[starry](https://github.com/sky22333)
 
 1.5 更新 (2024.05.14)
 
@@ -86,8 +77,20 @@ Version 1.0.0 2025.12.23
 
 
 
+
 - ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=ZYYO666/homepage&type=Date)](https://star-history.com/#ZYYO666/homepage&Date)
+
+
+
+````
+
+2025-12-29 更新 (v1.0.1)
+- 调整 `index.html`：命令终端改为 macOS 风格（玻璃、圆角、交通灯），外观更简洁。
+- 精简并整理内联脚本注释与结构，使源码更易读、像手工整理过。
+- 更新 `index.html` 中面板标题与样式，保留现有命令与交互逻辑。
+
+预览：在浏览器中打开 `index.html` 并点击右下悬浮图标查看终端样式。
 
 
